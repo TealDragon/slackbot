@@ -1,6 +1,5 @@
-import fuzzywuzzy as fw
-from fuzzywuzzy import process
 import pandas as pd
+from fuzzywuzzy import process
 
 question = input("What is your question for csgBot?")
 
@@ -20,3 +19,4 @@ if match[1] < 50:
 
 else:
     print(response)
+    print(match)
