@@ -8,6 +8,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from slack_bolt import App
 
+# Set the environment variable path and resolve SSL error
 ssl._create_default_https_context = ssl._create_unverified_context
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
@@ -21,7 +22,7 @@ question_col = df["Question"]
 question_list = ""
 for question in question_col:
     if isinstance(question, str):
-        question_list = question_list + question + '\n'
+        question_list = question_list + ' - ' + question + '\n'
 
 # Initializes the app with bot token and signing secret
 app = App(
@@ -29,13 +30,13 @@ app = App(
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
 
-# Listen to incoming messages containing CSGBot and respond
-@app.message(re.compile("(CSGBot|csgbot|csg bot|CSG Bot)"))
+# Listen to incoming messages at mentioning CSGBot and respond
+@app.message("@U0212T42EER")
 def message_hello(message, say):
     question = message["text"].replace("CSGBot", "")
     match = process.extractOne(question, df["search"], scorer=fuzz.token_set_ratio)
     response = df.iloc[match[2], 2]
-    if match[1] >= 50:
+    if match[1] >= 60:
         say(
             blocks=[
             {
@@ -45,30 +46,31 @@ def message_hello(message, say):
         ],
         text=response
     )
-        print(match[1])
     else:
-        say(
+        global no_match_reply
+        no_match_reply = say(
             blocks=[
             {
                 "type": "section",
-                "text": {"type": "mrkdwn", "text": "I'm sorry, I can't find an answer to that. Click the button to see a list of questions I can answer."},
+                "text": {"type": "mrkdwn", "text": "I'm sorry, I can't find an answer to that. Click the button to see a thread containing the list of questions I can answer."},
                 "accessory": {
                     "type": "button",
-                    "text": {"type": "plain_text", "text": "Question List"},
+                    "text": {"type": "plain_text", "text": "See Question List"},
                     "action_id": "button_click"
                 }
             }
         ],
-        text="I'm sorry, I can't find an answer to that. Click the button to see a list of questions I can answer."
+        text="I'm sorry, I can't find an answer to that. Click the button to see a thread containing the list of questions I can answer."
     )
-        print(match[1])
+        no_match_reply
+
 
 # Show question list if the button is clicked
-
 @app.action("button_click")
 def action_button_click(body, ack, say):
     ack()
-    say(question_list)
+    say(text=question_list, thread_ts=(no_match_reply["ts"]))
+    print(no_match_reply["ts"])
 
 
 # Handle non-CSGBot messages
