@@ -13,10 +13,14 @@ ssl._create_default_https_context = ssl._create_unverified_context
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
+# Grab the CSV location from google drive
+url = 'https://drive.google.com/file/d/1-lCFfce0O_uhiAsR7GqNYqSAt6aR1IKO/view?usp=sharing'
+path = 'https://drive.google.com/uc?export=download&id='+url.split('/')[-2]
+
 # Set up dataframe from CSV to calculate the LDistance
 def createDataFrame():
     global df
-    df = pd.read_csv("csgbot_data.csv")
+    df = pd.read_csv("path")
     df["search"] = df["Question"] + " " + df["Keywords"]
 
 # Set up string with possible questions
@@ -37,8 +41,8 @@ app = App(
 createDataFrame()
 createQuestionList()
 # TODO: Need to update with the relevant usernames of whoever should have access
-csgBotAdmins = ['coshew']
-accessDenied = "no no you sneaky moose"
+#csgBotAdmins = ['coshew']
+#accessDenied = "no no you sneaky moose"
 
 # Listen to incoming messages
 @app.message(" ")
@@ -86,9 +90,23 @@ def action_button_click(body, ack, say):
     say(text=questionList, thread_ts=(noMatchReply["ts"]))
     print(noMatchReply["ts"])
 
+
+# Refresh the dataframe based on updated info
+@app.command("/csgbot-refresh")
+def refresh_data ():
+    createDataFrame()
+    createQuestionList()
+
+
+
+
+# Deprecated functionality below this line
+
+
+# No longer needed with content hosted on google sheets
 # Create a command for fetching the latest version of the CSV used for the questions and responses
-@app.command("/csgbot-data")
-def repeat_text(ack, say, command):
+#@app.command("/csgbot-data")
+#def repeat_text(ack, say, command):
     if command["user_name"] in csgBotAdmins:
         ack()
         # TODO: Need to update the URL to where the CSV ends up being hosted.
@@ -113,9 +131,10 @@ def repeat_text(ack, say, command):
     else:
         say(accessDenied)
 
+# No longer needed with content hosted on google sheets
 # Create a command for deleting a row of info from the CSV
-@app.command("/csgbot-remove")
-def open_modal(ack, body, client, command, say):
+#@app.command("/csgbot-remove")
+#def open_modal(ack, body, client, command, say):
     if command["user_name"] in csgBotAdmins:
         ack()
         client.views_open(
@@ -159,9 +178,10 @@ def open_modal(ack, body, client, command, say):
     else:
         say(accessDenied)
 
+# No longer needed with content hosted on google sheets
 # Remove the specified row from the dataframe and resave the CSV
-@app.view("removeRowSubmit")
-def handle_submission(ack, body, client, view, logger, say):
+#@app.view("removeRowSubmit")
+#def handle_submission(ack, body, client, view, logger, say):
     ack()
     global df
     removeRowString = view["state"]["values"]["removeRowID"]["removeRowAction"]["value"]
@@ -171,10 +191,10 @@ def handle_submission(ack, body, client, view, logger, say):
     createDataFrame()
     createQuestionList()
 
-
+# No longer needed with content hosted on google sheets
 # Create a command for adding rows of info to the CSV
-@app.command("/csgbot-upload")
-def open_modal(ack, body, client, command, say):
+#@app.command("/csgbot-upload")
+#def open_modal(ack, body, client, command, say):
     if command["user_name"] in csgBotAdmins:
         ack()
         client.views_open(
@@ -242,9 +262,10 @@ def open_modal(ack, body, client, command, say):
     else:
         say(accessDenied)
 
+# No longer needed with content hosted on google sheets
 # When a new question is submitted, add it to the dataframe and then save that to CSV again
-@app.view("newRowSubmit")
-def handle_submission(ack, body, client, view, logger, say):
+#@app.view("newRowSubmit")
+#def handle_submission(ack, body, client, view, logger, say):
     ack()
     newQuestion = view["state"]["values"]["newQuestionID"]["newQuestionAction"]["value"]
     newKeyWords = view["state"]["values"]["newKeywordsID"]["newKeywordsAction"]["value"]
