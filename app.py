@@ -77,7 +77,7 @@ def message_hello(message, say):
     )
         noMatchReply
         # TODO: this channel ID needs to be changed based on where we want alerts coming through
-        say(text=f"The user <@{message['user']}> sent the unanswered question: " + messageText, channel="C022GLE1Q5B")
+        say(text=f"The user <@{message['user']}> sent the unanswered question: " + messageText, channel="C0262BM8UER")
 
 
 # Show question list if the button is clicked
@@ -90,9 +90,11 @@ def action_button_click(body, ack, say):
 
 # Refresh the dataframe based on updated info
 @app.command("/csgbot-refresh")
-def refresh_data ():
+def refresh_data (say, body, ack):
+    ack()
     createDataFrame()
     createQuestionList()
+    say(text="Thanks for keeping me so fresh and so clean.")
 
 
 # Handle non-CSGBot messages
