@@ -30,8 +30,8 @@ def createQuestionList():
 
 # Initializes the app with bot token and signing secret
 app = App(
-    token=os.environ.get("xoxb-2046135481284-2036922082501-JMGgPPvSz2WHfs0mvysGa1MR"),
-    signing_secret=os.environ.get("dd60242251ad619e6f5475ca1ff90d85")
+    token=os.environ.get("SLACK_BOT_TOKEN"),
+    signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
 
 createDataFrame()
