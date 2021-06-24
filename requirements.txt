@@ -1,5 +1,4 @@
 python-dotenv
 pandas
-os
 fuzzywuzzy
 slack_bolt
