@@ -103,6 +103,5 @@ def handle_message_events(body, logger):
     logger.info(body)
 
 # Start the app
-def app(environ, start_response):
-    if __name__ == "__main__":
-        bolt_app.start(port=int(os.environ.get("PORT", 5000)))
+if __name__ == "__main__":
+    bolt_app.start(port=int(os.environ.get("PORT", 5000)))

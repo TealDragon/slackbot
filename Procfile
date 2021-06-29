@@ -1,1 +1,1 @@
-web: gunicorn -w 4 app:bolt_app
+web: python3 app.py
