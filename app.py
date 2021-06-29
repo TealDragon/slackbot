@@ -33,7 +33,7 @@ def createQuestionList():
             questionList = questionList + ' - ' + question + '\n'
 
 # Initializes the app with bot token and signing secret
-app = App(
+bolt_app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET")
 )
@@ -42,7 +42,7 @@ createDataFrame()
 createQuestionList()
 
 # Listen to incoming messages
-@app.message(" ")
+@bolt_app.message(" ")
 def message_hello(message, say):
     messageText = message["text"]
     match = process.extractOne(messageText, df["search"], scorer=fuzz.token_set_ratio)
@@ -81,7 +81,7 @@ def message_hello(message, say):
 
 
 # Show question list if the button is clicked
-@app.action("button_click")
+@bolt_app.action("button_click")
 def action_button_click(body, ack, say):
     ack()
     say(text=questionList, thread_ts=(noMatchReply["ts"]))
@@ -89,7 +89,7 @@ def action_button_click(body, ack, say):
 
 
 # Refresh the dataframe based on updated info
-@app.command("/csgbot-refresh")
+@bolt_app.command("/csgbot-refresh")
 def refresh_data (say, body, ack):
     ack()
     createDataFrame()
@@ -98,11 +98,11 @@ def refresh_data (say, body, ack):
 
 
 # Handle non-CSGBot messages
-@app.event("message")
+@bolt_app.event("message")
 def handle_message_events(body, logger):
     logger.info(body)
 
 # Start the app
 def app(environ, start_response):
     if __name__ == "__main__":
-        app.start(port=int(os.environ.get("PORT", 5000)))
+        bolt_app.start(port=int(os.environ.get("PORT", 5000)))
