@@ -104,9 +104,5 @@ def handle_message_events(body, logger):
 
 # Start the app
 def app(environ, start_response):
-    start_response("200 OK", [
-            ("Content-Type", "text/plain"),
-            ("Content-Length", str(len(data)))
-        ])
     if __name__ == "__main__":
         app.start(port=int(os.environ.get("PORT", 5000)))
