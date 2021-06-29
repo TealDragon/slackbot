@@ -3,3 +3,4 @@ pandas
 fuzzywuzzy
 slack_bolt
 python-Levenshtein
+gunicorn
